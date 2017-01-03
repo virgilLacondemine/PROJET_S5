@@ -10,15 +10,14 @@ int main(int argc, char const *argv[]) {
 }
 
 /********************************************************
-* Fonction qui permet de lire l'header d'un fichier ELF.
+* Valide le header d'un fichier ELF.
 * Paramètre : ...
-* Retourne : ...
+* Retourne : -1 si le header n'est pas au format ELF
+*             0 si le header est au format ELF
 *********************************************************/
-int lecture_header(Elf32_Ehdr *elfHeader){
+int check_header(Elf32_Ehdr *elfHeader){
 
   /**************************************************************
-  * On vérifie que le fichier est bien au format ELF, sinon retourne
-  * une erreur (ici -1).
   * Les 4 premiers octets doivent correspondre au nombre magique
   * qui sert d'identification des fichiers ELF :
   *   ELFMAG0 == e_ident[EI_MAG0] "0x7f"
@@ -36,4 +35,23 @@ int lecture_header(Elf32_Ehdr *elfHeader){
 	else {
 		return 0;
 	}
+}
+
+/**********************************************************************
+* Affichage des informations relative au header sur la sortie standard
+* Paramètre : ...
+**********************************************************************/
+void read_elf_header(Elf32_Ehdr *elfHeader){
+  printf("* Plateforme cible :\n");
+  printf("*   Architecture                                     :\n", elfHeader->e_machine);
+  printf("*   Encodage des données                             :\n", elfHeader->e_ident[EI_DATA]);
+  printf("*\n");
+  printf("* Taille des mots                                    :\n", elfHeader->e_ident[EI_CLASS]);
+  printf("* Type de fichier ELF                                :\n", elfHeader->e_type);
+  printf("* Specification de la table des sections :\n", );
+  printf("*   Position dans le fichier (offset)                :\n", elfHeader->e_shnum);
+  printf("*   Taille globale                                   :\n", elfHeader->e_shentsize);
+  printf("*   Nombre d'entree                                  :\n", );
+  printf("* Entree de la table des chaines de noms de sections :\n", elfHeader->e_shstrndx);
+  printf("* Taille de l'en-tete                                :\n", elfHeader->e_ehsize);
 }
