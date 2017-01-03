@@ -32,4 +32,8 @@ int lecture_header(Elf32_Ehdr *elfHeader){
       elfHeader->e_ident[EI_MAG3] != EIMAG3) {
     return -1;
   }
+
+	else {
+		return 0;
+	}
 }
