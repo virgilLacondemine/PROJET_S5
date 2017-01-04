@@ -12,19 +12,19 @@
 
 int check_header(Elf32_Ehdr *elfHeader){
 
-  /**************************************************************
-  * Les 4 premiers octets doivent correspondre au nombre magique
-  * qui sert d'identification des fichiers ELF :
-  *   ELFMAG0 == e_ident[EI_MAG0] "0x7f"
-  *   ELFMAG1 == e_ident[EI_MAG1] "E"
-  *   ELFMAG2 == e_ident[EI_MAG2] "L"
-  *   ELFMAG3 == e_ident[EI_MAG3] "F"
-  **************************************************************/
+	/**************************************************************
+	* Les 4 premiers octets doivent correspondre au nombre magique
+	* qui sert d'identification des fichiers ELF :
+	*   ELFMAG0 == e_ident[EI_MAG0] "0x7f"
+	*   ELFMAG1 == e_ident[EI_MAG1] "E"
+	*   ELFMAG2 == e_ident[EI_MAG2] "L"
+	*   ELFMAG3 == e_ident[EI_MAG3] "F"
+	**************************************************************/
   
-  int EIMAG0=127;
-  char EIMAG1='E';
+	int EIMAG0=127;
+	char EIMAG1='E';
 	char EIMAG2='L';
-  char EIMAG3='F';
+	char EIMAG3='F';
   
   if (elfHeader->e_ident[EI_MAG0] != EIMAG0 ||
      elfHeader->e_ident[EI_MAG1] != EIMAG1 ||
@@ -137,24 +137,4 @@ void read_elf_header(Elf32_Ehdr *elfHeader){
   printf("* Table d'indexe                                     :%d\n", elfHeader->e_shstrndx);  
 }
 
-int main(int argc, char const *argv[]) {
-  Elf32_Ehdr *elfHeader;
-  FILE* f1;
 
- 	elfHeader = malloc(sizeof * elfHeader);
- 	
-  f1 = fopen(argv[1], "r");
-
-  fseek(f1, 0, SEEK_SET);
-
-  fread(elfHeader, sizeof(Elf32_Ehdr), 1, f1);
-
-	if ( check_header(elfHeader) )
-	{
-	  read_elf_header(elfHeader);
-	}
-  free(elfHeader);
-  fclose(f1);
-  
-  return 0;
-}
