@@ -7,7 +7,7 @@
 #include <elf.h>
 #include <string.h>
 
-/* 32-bit ELF base types. */
+/* 32-bit ELF Types de base */
 typedef unsigned int Elf32_Addr;
 typedef unsigned short Elf32_Half;
 typedef unsigned int Elf32_Off;
@@ -93,30 +93,33 @@ char* flags_name(int f) {
 }
 
 
-
+/* Lecture et affichage de la table des sections */
 void elf_print_section(const char* file) {
 
-
-	/* Déclaration d'attributs */
+	/* Déclaration de variables */
 	int idx;
 	Elf32_Shdr data;
 	Elf32_Ehdr hdr;
 	char*  name;
 	char* SectNames = "";
+	
 
 	FILE* fd = fopen(file, "r");
 	
+	/* Chargement de l'adresse du ELF header dans hdr */
   	fread(&hdr, 1, sizeof(Elf32_Ehdr), fd);
 
+	/* Chargement de l'adresse de la Section header dans data */
 	fseek(fd, hdr.e_shoff + hdr.e_shstrndx * sizeof(Elf32_Shdr), SEEK_SET);
   	fread(&data, 1, sizeof(data), fd);
 
 	SectNames = malloc(data.sh_size);
 
+	/* Chargement de l'adresse de la String table dans SectNames */
 	fseek(fd, data.sh_offset, SEEK_SET);
   	fread(SectNames, 1, data.sh_size, fd);
 
-	printf("Il y a %i en-têtes de section, débutant à l'adresse de décalage 0x%x:\n",hdr.e_shnum,hdr.e_shoff);
+	printf("\nIl y a %i en-têtes de section, débutant à l'adresse de décalage 0x%x:\n",hdr.e_shnum,hdr.e_shoff);
 
 	printf("  [%2s] %-20s", "Nr", "Nom");
 	printf("%-15s ", "Type");
@@ -132,11 +135,11 @@ void elf_print_section(const char* file) {
 
 	for (idx = 0; idx < hdr.e_shnum; idx++)
 	{
-
-
+		/* Chargement de l'adresse de la prochaine section (En commençant par la première) */
 		fseek(fd, hdr.e_shoff + idx * sizeof(Elf32_Shdr), SEEK_SET);
 		fread(&data, 1, sizeof(Elf32_Shdr), fd);
 
+		/* L'adresse contenu dans name devient celle du début de la String Table auquel on rajoute l'offset correspondant au nom section */
 		name = SectNames + data.sh_name;
 				
 		printf("  [%2u] %-20s", idx,name);	
@@ -156,6 +159,7 @@ void elf_print_section(const char* file) {
 		printf("%-8d ", data.sh_info);
 		printf("%-8d\n", data.sh_addralign);
 	}
+	
 	printf("Clé des fanions:\n W (écriture), A (allocation), X (exécution), M (fusion), S (chaînes)\n I (info), L (ordre des liens), G (groupe), T (TLS), E (exclu), x (inconnu)\n O (traiterment additionnel requis pour l'OS) o (spécifique à l'OS), p (spécifique au processeur)\n");
 
 }
