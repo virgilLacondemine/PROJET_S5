@@ -5,6 +5,8 @@
 #include "lecture_header_elf.h"
 #include "elf_section_reader.h"
 #include "lecture_section.h"
+#include "elf_relocation_reader.h"
+#include "elf_sym_reader.h"
 
 int main(int argc, char const *argv[]) {
 
@@ -82,6 +84,18 @@ int main(int argc, char const *argv[]) {
 			printf("L'argument concernant la section est invalide\n");
 			return -1;
 		}
+	}
+	
+	// Affichage de la table des symboles si option "-s"
+	else if ( !strcmp(argv[1], "-s") && argc == 3 )
+	{
+		read_sym_table(argv[2]);
+	}
+	
+	// Affichage de la table de relocation si option "-r"
+	else if ( !strcmp(argv[1], "-r") && argc == 3 )
+	{
+		read_rel_table(argv[2]);
 	}
 
 	// si aucune des option valable n'est utilisee en
