@@ -1,20 +1,21 @@
-main: main.c lecture_header_elf.o elf_section_reader.o lecture_section.o elf_relocation_reader.o elf_sym_reader.o
-	gcc -o main main.c lecture_header_elf.o elf_section_reader.o lecture_section.o elf_relocation_reader.o elf_sym_reader.o
+my_readelf: my_readelf.c elf_header.o elf_section_header_table.o elf_section.o elf_symbol_table.o elf_relocation_table.o
+	gcc -o my_readelf my_readelf.c elf_header.o elf_section_header_table.o elf_section.o elf_symbol_table.o elf_relocation_table.o
 
-lecture_header_elf.o: lecture_header_elf.c lecture_header_elf.h
-	gcc -c lecture_header_elf.c
 
-elf_section_header.o:  elf_section_header.c  elf_section_header.h
-	gcc -c elf_section_header.c
+elf_header.o: elf_header.c elf_header.h
+	gcc -c elf_header.c
 
-lecture_section.o: lecture_section.c lecture_section.h
-	gcc -fstack-protector -c lecture_section.c
-	
-elf_sym_reader.o:  elf_sym_reader.c  elf_sym_reader.h
-	gcc -c elf_sym_reader.c
-	
-elf_relocation_reader.o:  elf_relocation_reader.c  elf_relocation_reader.h
-	gcc -c elf_relocation_reader.c
+elf_section_header_table.o: elf_section_header_table.c elf_section_header_table.h
+	gcc -c elf_section_header_table.c
+
+elf_section.o: elf_section.c elf_section.h
+	gcc -fstack-protector -c elf_section.c
+
+elf_symbol_table.o: elf_symbol_table.c elf_symbol_table.h
+	gcc -c elf_symbol_table.c
+
+elf_relocation_table.o: elf_relocation_table.c elf_relocation_table.h
+	gcc -c elf_relocation_table.c
 
 clean:
-	rm *.o main
+	rm *.o my_readelf
