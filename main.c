@@ -4,7 +4,7 @@
 #include <elf.h>
 #include "lecture_header_elf.h"
 #include "elf_section_reader.h"
-//#include "lecture_section.h"
+#include "lecture_section.h"
 
 int main(int argc, char const *argv[]) {
 
@@ -58,13 +58,14 @@ int main(int argc, char const *argv[]) {
 	}
 
 	// Affichage de'une section x si option "-x" et que n°x
-/*	if ( !strcmp(argv[1], "-x") && argc == 4)
+	else if ( !strcmp(argv[1], "-x") && argc == 4)
 	{
-		if( (argv[3][0]>47) && (argv[3][0]<58) )
+		if( (argv[2][0]>47) && (argv[2][0]<58) )
 		{
-			if ( (argv[3]>=0) && (argv[3]<elfHeader->e_shnum) )
+			
+			if ( (argv[2]>=0) && (atoi(argv[2])<elfHeader->e_shnum) )
 			{
-				read_elf_section_num(elfSectionHeader, argv[2]);
+				read_elf_section_num(argv[3], atoi(argv[2]));
 			}
 			else
 			{
@@ -72,22 +73,17 @@ int main(int argc, char const *argv[]) {
 				return -1;
 			}
 		}
-		else if(argv[3][0]==46)
+		else if(argv[2][0]==46) // Si le nom de fichier est potentiellement valide on gere le fait qu'un nom n'existe pas dans Lecture_section.c
 		{
-			int existe = read_elf_section_nom(elfSectionHeader, argv[2]); // 1 s'il existe, 0 sinon
-			if (!existe)
-			{
-				printf("Nom de section invalide");
-				return -1;
-			}
+			read_elf_section_nom(argv[3], argv[2]);
 		}
 		else
 		{
-			printf("L'argument concernant la section est invalide");
+			printf("L'argument concernant la section est invalide\n");
 			return -1;
 		}
 	}
-*/
+
 	// si aucune des option valable n'est utilisee en
 	// second argument, on affiche l'ensemble des options 
 	else

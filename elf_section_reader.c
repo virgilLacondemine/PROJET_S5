@@ -6,13 +6,14 @@
 #include <sys/mman.h>
 #include <elf.h>
 #include <string.h>
+#include "elf_section_reader.h"
 
 /* 32-bit ELF base types. */
-typedef unsigned int Elf32_Addr;
-typedef unsigned short Elf32_Half;
-typedef unsigned int Elf32_Off;
-typedef signed int Elf32_Sword;
-typedef unsigned int Elf32_Word;
+//typedef unsigned int Elf32_Addr;
+//typedef unsigned short Elf32_Half;
+//typedef unsigned int Elf32_Off;
+//typedef signed int Elf32_Sword;
+//typedef unsigned int Elf32_Word;
 
 
 char* section_type_name(Elf32_Word  type_number) {
@@ -112,7 +113,6 @@ void elf_print_section(const char* file) {
 	fseek(fd, data.sh_offset, SEEK_SET);
   	fread(SectNames, 1, data.sh_size, fd);
 
-	printf("%s\n", SectNames);
 
 
 	printf("Il y a %i en-têtes de section, débutant à l'adresse de décalage 0x%x:\n",hdr.e_shnum,hdr.e_shoff);
@@ -145,7 +145,7 @@ void elf_print_section(const char* file) {
 			printf("%-8i ", data.sh_addr);
 		else
 		printf("%-.8d ", 0);
-			printf("%-.6x ", data.sh_offset);
+		printf("%-.6x ", data.sh_offset);
 		printf("%-.6x ", data.sh_size);
 		printf("%-.2d ", data.sh_entsize);
 		printf("%-8s ", flags_name(data.sh_flags));
@@ -155,6 +155,9 @@ void elf_print_section(const char* file) {
 	}
 	printf("Clé des fanions:\n W (écriture), A (allocation), X (exécution), M (fusion), S (chaînes)\n I (info), L (ordre des liens), G (groupe), T (TLS), E (exclu), x (inconnu)\n O (traiterment additionnel requis pour l'OS) o (spécifique à l'OS), p (spécifique au processeur)\n");
 
+	fclose(fd);
+	free(SectNames);
+	
 }
 
 
