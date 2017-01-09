@@ -152,7 +152,7 @@ void print_elf_section_header_table(const char* file) {
 
 		printf("%-.6x ", data.sh_offset);
 		printf("%-.6x ", data.sh_size);
-		printf("%-.2d ", data.sh_entsize);
+		printf("%-.2x ", data.sh_entsize);
 		printf("%-8s ", flags_name(data.sh_flags));
 		printf("%-8d ", data.sh_link);
 		printf("%-8d ", data.sh_info);
