@@ -53,25 +53,15 @@ void print_elf_section_header_table(const char* file) {
 		else
 			printf("%-.8d ", 0);
 
-<<<<<<< HEAD
 		printf("%-.6x ", sectionHeader->sh_offset);
 		printf("%-.6x ", sectionHeader->sh_size);
-		printf("%-.2d ", sectionHeader->sh_entsize);
+		printf("%-.2x ", sectionHeader->sh_entsize);
 		printf("%-8s ", flags_name(sectionHeader->sh_flags));
 		printf("%-8d ", sectionHeader->sh_link);
 		printf("%-8d ", sectionHeader->sh_info);
 		printf("%-8d\n", sectionHeader->sh_addralign);
 		
 		free(sectionHeader);
-=======
-		printf("%-.6x ", data.sh_offset);
-		printf("%-.6x ", data.sh_size);
-		printf("%-.2x ", data.sh_entsize);
-		printf("%-8s ", flags_name(data.sh_flags));
-		printf("%-8d ", data.sh_link);
-		printf("%-8d ", data.sh_info);
-		printf("%-8d\n", data.sh_addralign);
->>>>>>> 4266f529385323617014295b9d048f5bb4ae4ff9
 	}
 
 	printf("Clé des fanions:\n");

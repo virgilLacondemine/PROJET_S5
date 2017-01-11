@@ -4,13 +4,8 @@ my_readelf: my_readelf.c elf_header.o elf_section_header_table.o elf_section.o e
 elf_reader.o: elf_reader.c elf_reader.h
 	gcc -c elf_reader.c
 
-<<<<<<< HEAD
 Affichage.o: Affichage.c Affichage.h
 	gcc -c Affichage.c
-=======
-fusion_elf: main_fus.c Fus_renumsec.o
-	gcc -o fusion_elf main_fus.c Fus_renumsec.o
->>>>>>> 4266f529385323617014295b9d048f5bb4ae4ff9
 
 Fus_renumsec.o: Fus_renumsec.c Fus_renumsec.h
 	gcc -c Fus_renumsec.c
@@ -31,9 +26,5 @@ elf_relocation_table.o: elf_relocation_table.c elf_relocation_table.h
 	gcc -c elf_relocation_table.c
 	
 clean:
-<<<<<<< HEAD
-	rm *.o my_readelf main_fus
-=======
 	rm *.o my_readelf
-	rm *.o fusion_elf
->>>>>>> 4266f529385323617014295b9d048f5bb4ae4ff9
+
