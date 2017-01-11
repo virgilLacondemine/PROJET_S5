@@ -1,3 +1,6 @@
+fusion_elf: main_fus.c Fus_renumsec.o
+	gcc -o fusion_elf main_fus.c Fus_renumsec.o
+
 my_readelf: my_readelf.c elf_header.o elf_section_header_table.o elf_section.o elf_symbol_table.o elf_relocation_table.o Affichage.o elf_reader.o
 	gcc -o my_readelf my_readelf.c elf_header.o elf_section_header_table.o elf_section.o elf_symbol_table.o elf_relocation_table.o Affichage.o elf_reader.o
 	
@@ -27,4 +30,4 @@ elf_relocation_table.o: elf_relocation_table.c elf_relocation_table.h
 	
 clean:
 	rm *.o my_readelf
-
+	rm *.o fusion_elf
