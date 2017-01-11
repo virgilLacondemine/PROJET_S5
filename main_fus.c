@@ -5,7 +5,9 @@
 #include "Fus_renumsec.h"
 
 int main(int argc, char const *argv[]) {
-	FILE * f1, f2, f3
+	FILE * f1;
+	FILE * f2;
+	FILE * f3;
 
 /*******************************************	
 	f1 : fichier 1 de la fusion
@@ -17,7 +19,7 @@ int main(int argc, char const *argv[]) {
 	f2 = fopen(argv[2], "r");	
 	f3 = fopen(argv[3], "w");
 	
-	fusion(FILE * f1, FILE * f2, FILE * f3);
+	fusion(f1, f2, f3);
 	
 	fclose(f1);
 	fclose(f2);

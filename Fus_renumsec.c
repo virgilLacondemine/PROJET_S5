@@ -1,62 +1,73 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <elf.h>
+#include <string.h>
+#include "Fus_renumsec.h"
+#include "elf_reader.h"
 
 void fusion(FILE * f1, FILE * f2, FILE * f3){
 
-	Elf32_Shdr data1, data2;
-	Elf32_Ehdr hdr1, hdr2;
-	char* sectNames1, sectNames2;
-	char* name1, name2;
+	int i, j, k;
 	
-	// fichier 1
-  fread(&hdr1, 1, sizeof(Elf32_Ehdr), f1);
-
-	fseek(f1, hdr1.e_shoff + hdr1.e_shstrndx * sizeof(Elf32_Shdr), SEEK_SET);
-  fread(&data1, 1, sizeof(Elf32_Shdr), f1);
-
-	sectNames1 = malloc(data1.sh_size);
-
-	fseek(f1, data1.sh_offset, SEEK_SET);
-  fread(sectNames1, 1, data1.sh_size, f1);
- 
-	// fichier 2
-  fread(&hdr2, 1, sizeof(Elf32_Ehdr), f2);
-
-	fseek(f2, hdr2.e_shoff + hdr2.e_shstrndx * sizeof(Elf32_Shdr), SEEK_SET);
-  fread(&data2, 1, sizeof(Elf32_Shdr), f2);
-
-	sectNames2 = malloc(data2.sh_size);
-
-	fseek(f2, data2.sh_offset, SEEK_SET);
-  fread(sectNames2, 1, data2.sh_size, f2);
-  
-  // Parcour des types de data1 / Pour le PROGBITS
-  for (int idx = 0; idx < hdr.e_shnum; idx++)
-	{
-
-		fseek(f1, hdr1.e_shoff + idx * sizeof(Elf32_Shdr), SEEK_SET);
-		fread(&data1, 1, sizeof(Elf32_Shdr), f1);		
+	Elf32_Ehdr *header1, *header2, *header3;
+	Elf32_Shdr *sectionHeader1, *sectionHeader2, *sectionHeader3;
+	char* stringTable1;
+	char* stringTable2;
+	char* stringTable3;
+	char* name1="";
+	char* name2="";
+	char* name3="";
+	
+	stringTable3[0] = '\0';
+	
+	header1 = getHeader(f1);
+	header2 = getHeader(f2);
+	
+	header3 = header1;
+	
+	fwrite(header3, 1, sizeof(header3), f3);
+	
+	for(i = 0; i<header1->e_shnum; i++){
+		sectionHeader1 = getSectionHeader(f1, header1, i);
+		stringTable1 = getStringTable(f1, header1);
+		name1 = stringTable1 +  sectionHeader1->sh_name ;
 		
-		if(data1.sh_type == 1) // Si le data1.sh_type est un PROGBITS
-		{
-			// Parcour des types de data2
-			for (int idy = 0; idy < hdr.e_shnum; idy++)
-			{
-				fseek(f2, hdr2.e_shoff + idy * sizeof(Elf32_Shdr), SEEK_SET);
-				fread(&data2, 1, sizeof(Elf32_Shdr), f2);
-				
-				if(data2.sh_type == 1)
-				{
-					name2 = sectNames2 + data2.sh_name;
-					name1 = sectNames1 + data1.sh_name;
-					
-					if(!strcmp(name1, name2))
-					{
-						
-					}
-				}
-			}
+		for(j = 0; j<header2->e_shnum || ( !strcmp(name1, name2) && sectionHeader1->sh_type==1 && sectionHeader2->sh_type==1 ); j++){
+			sectionHeader2 = getSectionHeader(f2, header2, j);
+			stringTable2 = getStringTable(f2, header2);
+			name2 = stringTable2 +  sectionHeader2->sh_name ;			
 		}
+		
+		if(!strcmp(name1, name2)){
+			sectionHeader3 = getSectionHeader(f1, header1, i);
+			name3 = name1;
+			
+			unsigned char *section = malloc(sectionHeader1->sh_size + sectionHeader2->sh_size);
+			unsigned char *section1 = malloc(sectionHeader1->sh_size);
+			unsigned char *section2 = malloc(sectionHeader2->sh_size);
+
+			fseek(f1,sectionHeader1->sh_offset, SEEK_SET);
+			fread(section1, 1, sectionHeader1->sh_size, f1);
+			
+			fseek(f2,sectionHeader2->sh_offset, SEEK_SET);
+			fread(section2, 1, sectionHeader2->sh_size, f2);
+			
+			for(k = 0; k<sectionHeader1->sh_size;k++)
+			{
+				section[k] = section1[k];
+			}
+			for(k = sectionHeader1->sh_size; k<sectionHeader1->sh_size + sectionHeader2->sh_size;k++)
+			{
+				section[k] = section2[k - sectionHeader1->sh_size];
+			}
+			
+			fwrite(section, 1, sizeof(section), f3);
+			
+			free(section);
+			free(section1);
+			free(section2);
+		}
+		
 	}
+	
 }

@@ -7,149 +7,43 @@
 #include <elf.h>
 #include <string.h>
 #include "elf_symbol_table.h"
-
-
-
-/* Sémantique du nom en fonction de la valeur du type du symbole */
-char* sym_type_name(Elf32_Word  type_number) {
-
-	switch (type_number)
-	{
-		case 0:
-			return "NOTYPE";
-		case 1:
-			return "OBJECT";
-		case 2:
-			return "FUNC";
-		case 3:
-			return "SECTION";
-		case 4:
-			return "FILE";
-		case 13:
-			return "LOPROC";
-		case 15:
-			return "HIPROC";
-		default :
-			return "NOTYPE";
-	}
-}
-
-/* Sémantique du nom en fonction de la valeur du type du lien */
-char* sym_bind_name(Elf32_Word  type_number) {
-
-	switch (type_number)
-	{
-		case 0:
-			return "LOCAL";
-		case 1:
-			return "GLOBAL";
-		case 2:
-			return "WEAK";
-		case 13:
-			return "LOPROC";
-		case 15:
-			return "HIPROC";
-		default :
-			return "LOCAL";
-	}
-}
-
-/* Sémantique du nom en fonction de la valeur du type de la visibilité */
-char* sym_vis_name(Elf32_Word  type_number) {
-
-	switch (type_number)
-	{
-		case 0:
-			return "DEFAULT";
-		case 1:
-			return "INTERNAL";
-		case 2:
-			return "HIDDEN";
-		case 3:
-			return "PROTECTED";
-		default :
-			return "DEFAULT";
-	}
-}
-
-/* Sémantique du nom en fonction de la valeur du type du ndx */
-char* sym_ndx_name(Elf32_Word  type_number) {
-
-	char* buf = malloc(sizeof(char) * 16);
-
-	switch ((int)type_number)
-	{
-		case 0:
-			return "UND";
-		case (65521):
-			return "ABS";
-		default :
-			
-			sprintf(buf,"%d",type_number);
-			return buf;
-	}
-}
+#include "Affichage.h"
+#include "elf_reader.h"
 
 /* Lecture et Affichage de la table des symboles */
 void print_elf_symbol_table(const char* file) {
-	
-	/* Déclarations des variables */
-	int idx;
-	Elf32_Shdr data;
-	Elf32_Shdr data2;
-	Elf32_Ehdr hdr;
-	Elf32_Sym sym_tab;	
+
+	int i = 0;
+	Elf32_Shdr *sectionHeader;
+	Elf32_Shdr *symbolTableHeader;
+	Elf32_Ehdr *header;
+	Elf32_Sym *symbolTable;	
 	char* name;
-	char* name2;
-	char* SectNames = "";
+	char* stringTable;
 	
 
-	FILE* fd = fopen(file, "r");
+	FILE* f = fopen(file, "r");
 	
-	/* Chargement de l'adresse du ELF header dans hdr */
-  	fread(&hdr, 1, sizeof(Elf32_Ehdr), fd);
+	header = getHeader(f);
+	stringTable = getStringTable(f, header);
 
-	/* Chargement de l'adresse de la Section header dans data */
-	fseek(fd, hdr.e_shoff + hdr.e_shstrndx * sizeof(Elf32_Shdr), SEEK_SET);
-  	fread(&data, 1, sizeof(data), fd);
-
-	SectNames = malloc(data.sh_size);
-
-	/* Chargement de l'adresse de la String table dans SectNames */
-	fseek(fd, data.sh_offset, SEEK_SET);
-  	fread(SectNames, 1, data.sh_size, fd);
-
-
-	/* Parcours des sections jusqu'à '.symtab' */
-	for (idx = 0; idx < hdr.e_shnum; idx++)
+	for (i = 0; i < header->e_shnum; i++)
 	{
-		/* Chargement de l'adresse de la prochaine section (En commençant par la première) */
-		fseek(fd, hdr.e_shoff + idx * sizeof(data), SEEK_SET);
-		fread(&data, 1, sizeof(data), fd);
+		sectionHeader = getSectionHeader(f, header, i);
+		name = stringTable + sectionHeader->sh_name;
 
-		/* L'adresse contenu dans name devient celle du début de la String Table auquel on rajoute l'offset correspondant au nom section */
-		name = SectNames + data.sh_name;
-
-		if (strcmp(name,".symtab")==0) {
-			name2 = name;
-			data2 = data;
+		if (strcmp(name,".symtab")==0)
+		{
+			symbolTableHeader = sectionHeader;
 		}		
 	}
 
-	printf("\nTable de symboles ' %s ' contient %i entrées:\n", name2, data2.sh_size / data2.sh_entsize);
 
-	free(SectNames);
+	printf("\nTable de symboles '.symtab' contient %i entrées:\n", symbolTableHeader->sh_size / symbolTableHeader->sh_entsize);
 
-	/* Chargement de l'adresse de la Symbol Table dans sym_tab */
-	fseek(fd, hdr.e_shoff + hdr.e_shstrndx * sizeof(Elf32_Shdr) + data2.sh_offset * sizeof(Elf32_Shdr), SEEK_SET);
-  	fread(&sym_tab, 1, sizeof(Elf32_Sym), fd);
+	fseek(f, sectionHeader->sh_offset, SEEK_SET);
+ 	fread(stringTable, 1, sectionHeader->sh_size, f);
 
-	SectNames = malloc(data.sh_size);
-
-	/* Chargement de l'adresse de la String table dans SectNames */
-	fseek(fd, data.sh_offset, SEEK_SET);
-  	fread(SectNames, 1, data.sh_size, fd);
-  	
 	printf(" %6s", "Num:");
 	printf("%9s", "Valeur");
 	printf(" %4s", "Tail");
@@ -159,25 +53,28 @@ void print_elf_symbol_table(const char* file) {
 	printf(" %5s", "Ndx");
 	printf(" %-8s\n", "Nom:");
 
-	for (idx = 0; idx < data2.sh_size / data2.sh_entsize; idx++)
+	for (i = 0; i < symbolTableHeader->sh_size / symbolTableHeader->sh_entsize; i++)
 	{
-		/* Chargement de l'adresse du prochain symbole */
-		fseek(fd, data2.sh_addr + data2.sh_offset + idx * sizeof(Elf32_Sym), SEEK_SET);
-		fread(&sym_tab, 1, sizeof(Elf32_Sym), fd);
+		symbolTable = getSymbolTable(f, symbolTableHeader, i);
 		
-		printf("%6i: ",idx);
-		printf("%-.8x",sym_tab.st_value);
-		printf(" %4i",sym_tab.st_size);
-		printf(" %-8s",sym_type_name(ELF32_ST_TYPE(sym_tab.st_info)));
-		printf(" %-6s",sym_bind_name(ELF32_ST_BIND(sym_tab.st_info)));
-		printf(" %-8s",sym_vis_name(sym_tab.st_other));
-		printf(" %5s",sym_ndx_name(sym_tab.st_shndx));
+		printf("%6i: ",i);
+		printf("%-.8x",symbolTable->st_value);
+		printf(" %4i",symbolTable->st_size);
+		printf(" %-8s",sym_type_name(ELF32_ST_TYPE(symbolTable->st_info)));
+		printf(" %-6s",sym_bind_name(ELF32_ST_BIND(symbolTable->st_info)));
+		printf(" %-8s",sym_vis_name(symbolTable->st_other));
+		printf(" %5s",sym_ndx_name(symbolTable->st_shndx));
 
-		name = SectNames + sym_tab.st_name;
+		name = stringTable + symbolTable->st_name;
 		
 		printf(" %-8s\n",name);
 	}
-	free(SectNames);
+
+	free(stringTable);
+	free(header);
+	free(sectionHeader);
+	free(symbolTableHeader);
+	fclose(f);
 		
 }
 

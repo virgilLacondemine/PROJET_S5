@@ -168,7 +168,7 @@ int main(int argc, char const *argv[])
 				if ( (argv[2]<0) || (atoi(argv[2])>=elfHeader->e_shnum) )
 				{
 					free(elfHeader);
-					printf("Le numéro de section en argument est invalide");
+					printf("Le numéro de section en argument est invalide\n");
 					return -1;
 				}
 				free(elfHeader);
