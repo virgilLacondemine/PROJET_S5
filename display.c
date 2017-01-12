@@ -318,15 +318,16 @@ void display_relocation_table(const char* file)
 	printf("\nSection de relocalisation '.rel.text' à l'adresse de décalage 0x%x contient %i entrées:\n", relocationTableHeader->sh_offset,relocationTableHeader->sh_size / relocationTableHeader->sh_entsize);
 	printf("%8s ", " Décalage");
 	printf("%6s ", "Info");
-	printf("%8s\n", "Type");
+	printf("%8s", "Type");
+	printf("%13.8s\n", "Val.-Sym");
 
 	for (i = 0; i < relocationTableHeader->sh_size / relocationTableHeader->sh_entsize; i++)
 	{
 		relocationTable = getRelocationTable(f, relocationTableHeader, i);
-
 		printf("%-.8x ",relocationTable->r_offset);
 		printf("%-.8x ",relocationTable->r_info);
 		printf("%-8s",rel_type_name(ELF32_R_TYPE(relocationTable->r_info)));
+		printf("%10.8x",(ELF32_R_SYM(relocationTable->r_info)<<1));
 		printf("\n");
 	}
 
