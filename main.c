@@ -136,6 +136,7 @@ int main(int argc, char const *argv[])
 			printf("	./main -x [name] [FILE]: Affichage du contenu de la section de nom [name] fichier elf [FILE]\n");
 			printf("	./main -s [FILE]: Affichage de la table des symboles du fichier elf [FILE]\n");
 			printf("	./main -r [FILE]: Affichage des table de réimplantation du fichier elf [FILE]\n");
+			printf("	./main -f [FILE1] [FILE2] [FILE3]: Fusion des fichiers [FILE1] et [FILE2] dans le [FILE3]\n");
 			return -1;
 		}
 	}
@@ -193,6 +194,7 @@ int main(int argc, char const *argv[])
 			printf("	./main -x [name] [FILE]: Affichage du contenu de la section de nom [name] fichier elf [FILE]\n");
 			printf("	./main -s [FILE]: Affichage de la table des symboles du fichier elf [FILE]\n");
 			printf("	./main -r [FILE]: Affichage des table de réimplantation du fichier elf [FILE]\n");
+			printf("	./main -f [FILE1] [FILE2] [FILE3]: Fusion des fichiers [FILE1] et [FILE2] dans le [FILE3]\n");
 			return -1;
 		}
 	}
@@ -222,6 +224,7 @@ int main(int argc, char const *argv[])
 		printf("	./main -x [name] [FILE]: Affichage du contenu de la section de nom [name] fichier elf [FILE]\n");
 		printf("	./main -s [FILE]: Affichage de la table des symboles du fichier elf [FILE]\n");
 		printf("	./main -r [FILE]: Affichage des table de réimplantation du fichier elf [FILE]\n");
+		printf("	./main -f [FILE1] [FILE2] [FILE3]: Fusion des fichiers [FILE1] et [FILE2] dans le [FILE3]\n");
 		return -1;
 	}
 
