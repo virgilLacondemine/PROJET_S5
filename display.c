@@ -93,7 +93,7 @@ void display_section_header_table(const char* file)
 
 		printf("%-.6x ", sectionHeader->sh_offset);
 		printf("%-.6x ", sectionHeader->sh_size);
-		printf("%-.2d ", sectionHeader->sh_entsize);
+		printf("%-.2x ", sectionHeader->sh_entsize);
 		printf("%-8s ", flags_name(sectionHeader->sh_flags));
 		printf("%-8d ", sectionHeader->sh_link);
 		printf("%-8d ", sectionHeader->sh_info);
