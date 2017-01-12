@@ -72,7 +72,7 @@ void fusion(const char* file1, const char* file2,const char* file3)
 	char* sectNames1, * sectNames2;
 	char* name1, * name2, * name;
 	int u_should_not_pass[50];
-	int i1=0, i2=0, j=0;
+	int i1=0, i2=1, j=0;
 
 
 	// fichier 1
@@ -177,7 +177,7 @@ void fusion(const char* file1, const char* file2,const char* file3)
 
 	}
 
-	printf("\nIl y a %i en-têtes de section, débutant à l'adresse de décalage 0x%x:\n", hdr1.e_shnum + hdr2.e_shnum, hdr1.e_shoff);
+	printf("\nIl y a %i en-têtes de section, débutant à l'adresse de décalage 0x%x:\n", hdr1.e_shnum + hdr2.e_shnum - j, hdr1.e_shoff);
 
 	printf("  [%2s] %-20s", "Nr", "Nom");
 	printf("%-15s ", "Type");
@@ -192,16 +192,12 @@ void fusion(const char* file1, const char* file2,const char* file3)
 
 	for (int idx = 0; idx < hdr1.e_shnum + hdr2.e_shnum - j ; idx++)
 	{
-
-
-
-
 		/* L'adresse contenu dans name devient celle du début de la String Table auquel on rajoute l'offset correspondant au nom section */
 
-
-
-
-		name = sectNames1 + data[idx].sh_name;
+		if(idx < hdr1.e_shnum)
+			name = sectNames1 + data[idx].sh_name;
+		else
+			name = sectNames2 + data[idx].sh_name;
 
 		printf("  [%2u] %-20s", idx,name);
 
